@@ -67,7 +67,6 @@ for i in range(0,10):
     w.append([randomgen()])
     w[i].append(fitness(w[i][0]))
     l.append(w[i][1])
-print(max(l))
 
 for i in range(10):
     w[i].append([])
@@ -101,8 +100,7 @@ def willfit(a,index,new):
 
 
 sea,rivers,streams=relation(w)
-print(sea)
-t=2
+t=10
 for _ in range(t):
     for j in range(len(rivers)):
         bfitindex = 999
@@ -166,4 +164,13 @@ for _ in range(t):
         sea[1], rivers[bfitindex][1] = rivers[bfitindex][1], sea[1]
 
 
-print(sea)
+print("VMs in Server : " , sea[0])
+server=[]
+notused=[]
+for i in range(0,n):
+    if(i in sea[0]):
+        server.append(i)
+    else :
+        notused.append(i)
+print("Servers used : ",server)
+print("Servers not used : ",notused)
