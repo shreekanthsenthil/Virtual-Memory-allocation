@@ -4,7 +4,7 @@ import collections
 def second(a):
     return a[1]
 vm = []
-n = 10
+n = 20
 rp = 25
 rm = 25
 p=0.25
@@ -62,11 +62,14 @@ def fitness(r):
 
 
 w=[]
+l=[]
 for i in range(0,10):
     w.append([randomgen()])
     w[i].append(fitness(w[i][0]))
+    l.append(w[i][1])
+print(max(l))
 
-for i in range(n):
+for i in range(10):
     w[i].append([])
 
 def relation(w2):
@@ -74,14 +77,93 @@ def relation(w2):
     sea=w2[0]
     rivers=w2[1:4]
     streams=w2[4:10]
-    for i in range(len(rivers)):
-        rivers[i][2]=sea[0]
+    '''for i in range(len(rivers)):
+        rivers[i][2]=sea[0]'''
     for i in range(len(streams)):
         temp=choice(rivers)
-        streams[i][2]=temp[0]
+        streams[i][2]=rivers.index(temp)
+    #streams[-1][2]=-999
     return sea,rivers,streams
+
+def willfit(a,index,new):
+    server=[]
+    for i in range(0,n):
+        server.append([90,90])
+    for i in range(0,n):
+        for j in range(0,n):
+            if(a[j] == i):
+                server[i][0] -= vm[j][0]
+                server[i][1] -= vm[j][1]
+    if(server[new][0] >= vm[index][0] and server[new][1] >= vm[index][1]):
+        return True
+    else :
+        return False
+
+
 sea,rivers,streams=relation(w)
 print(sea)
-print(rivers[0])
-print(streams)
+t=2
+for _ in range(t):
+    for j in range(len(rivers)):
+        bfitindex = 999
+        bfit = 0
+        for k in range(len(streams)):
+            if(streams[k][2] == j):
+                l=[]
+                for i in range(n):
+                    if(streams[k][0][i]!=rivers[j][0][i]):
+                        l.append(i)
+                q=True
+                count = 0
+                fail = 0
+                while(q == True):
 
+                    c=choice(l)
+                    if(willfit(streams[k][0],c,rivers[j][0][c])):
+                        streams[k][0][c]=rivers[j][0][c]
+                        count +=1
+                    else:
+                        fail +=1
+                    if(count==2 or fail == 20):
+                        q=False
+                fit = fitness(streams[k][0])
+                streams[k][1] = fit
+                if(fit > bfit):
+                    bfitindex = k
+                    bfit = fit
+        if(bfit > rivers[j][1]):
+            rivers[j][0],streams[bfitindex][0] = streams[bfitindex][0],rivers[j][0]
+            rivers[j][1], streams[bfitindex][1] = streams[bfitindex][1], rivers[j][1]
+
+    bfitindex = 999
+    bfit = 0
+    for j in range(len(rivers)):
+        l=[]
+        for i in range(n):
+            if(sea[0][i] != rivers[j][0][i]):
+                l.append(i)
+        a = True
+        count = 0
+        fail = 0
+        while (a == True):
+
+            c = choice(l)
+            if (willfit(rivers[j][0], c, sea[0][c])):
+                rivers[j][0][c] = sea[0][c]
+                count += 1
+            else :
+                fail +=1
+            if (count == 2 or fail ==20):
+                a = False
+
+        fit = fitness(rivers[j][0])
+        rivers[j][1] = fit
+        if (fit > bfit):
+            bfitindex = j
+            bfit = fit
+    if (bfit > sea[1]):
+        sea[0], rivers[bfitindex][0] = rivers[bfitindex][0], sea[0]
+        sea[1], rivers[bfitindex][1] = rivers[bfitindex][1], sea[1]
+
+
+print(sea)
